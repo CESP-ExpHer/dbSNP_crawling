@@ -8,7 +8,7 @@ https://cesp.inserm.fr/en/equipe/exposome-and-heredity
 
 
 ## Notes
-This is **Crawling** python code to extract the chromosome & postioin of the SNP (rsID) from https://www.ncbi.nlm.nih.gov/.  
+This is **Crawling** python code to retrieve the chromosome & postioin of the SNP (rsID) from https://www.ncbi.nlm.nih.gov/.  
 
 ### How to use
 It needs 4 arguments to be passed on the Crawling()
