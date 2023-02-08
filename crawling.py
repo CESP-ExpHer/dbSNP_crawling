@@ -74,7 +74,7 @@ class Crawling:
 
         return resultDict
 
-    def crawlingFromFile(self) -> list:
+    def crawlingFromFile(self) -> dict:
         resultDict = dict()
         newList = list()
         try:
