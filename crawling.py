@@ -9,9 +9,11 @@ class noSNP(Exception):
     pass
 
 class Crawling:
-    def __init__(self, fileName: str, SNP: str, GRCh: str = None, sep: str = ',') -> object:
+    def __init__(self, fileName: str, SNP: str = None, Chr:str =None, Pos:str = None, GRCh: str = None, sep: str = ',') -> object:
         self.fileName = fileName
         self.SNP = SNP
+        self.Chr = Chr
+        self.Pos = Pos
         self.GRCh = GRCh
         self.sep = sep
 
@@ -63,9 +65,18 @@ class Crawling:
 
                 # get chromosome and position info
                 chromosome = chromosomeData[0].find_all('dd')[2]
-                # extract by GRCh; whether 37 or 38
-                chrPos = list(filter(lambda x: re.match(GRChRX, x), chromosome.contents))[0].split('\n')
-                resultDict[SNP_name] = chrPos[0].split(':') + chrPos
+
+                if (self.Chr and self.Pos) is not None:
+                    # extract by GRCh; whether 37 or 38
+                    # temp = [chromosome.contents[0].get_text() + chromosome.contents[1].get_text()] + \
+                    #        [chromosome.contents[2].get_text() + chromosome.contents[3].get_text() +
+                    #         chromosome.contents[4].get_text() + chromosome.contents[5].get_text()]
+                    # chrPos = list(filter(lambda x: re.match(GRChRX, x), temp))[0].split('\n')
+                    resultDict[SNP_name] = self.GRCh
+                elif self.SNP is not None:
+                    chrPos = list(filter(lambda x: re.match(GRChRX, x), chromosome.contents))[0].split('\n')
+                    resultDict[SNP_name] = chrPos[0].split(':') + chrPos
+
                 success = True
 
             except requests.RequestException:
@@ -74,6 +85,7 @@ class Crawling:
 
         return resultDict
 
+
     def crawlingFromFile(self) -> dict:
         resultDict = dict()
         newList = list()
@@ -81,26 +93,45 @@ class Crawling:
             print("*********Reading file from " + self.fileName + "*********\n")
             inputFile = open(self.fileName, 'r')
             header = inputFile.readline().strip().split(self.sep)
-            SNP_index = header.index(self.SNP)
+
+            if (self.Chr and self.Pos is not None):
+                Chr_index = header.index(self.Chr)
+                Pos_index = header.index(self.Pos)
+            elif self.SNP is not None:
+                SNP_index = header.index(self.SNP)
             lines = inputFile.readlines()
 
             # Append column name in the result dictionary
-            header.append('Chromosome')
-            header.append('Position')
+            if (self.Chr and self.Pos is not None):
+                header.append('SNP')
+            elif self.SNP is not None:
+                header.append('Chromosome')
+                header.append('Position')
             header.append('chr_pos')
             header.append('GRChEncode')
             resultDict['Column'] = header
 
             for line in lines:
                 line = line.strip().split(self.sep)
-                url = "https://www.ncbi.nlm.nih.gov/snp/?term=" + line[SNP_index]
-                SNPDict = self.getDataFromDBSNP(url=url)
-                for key, value in SNPDict.items():
-                    print('Working on ' + key)
-                    if line[SNP_index] != key:
-                        print('The SNP id is not found in the SNP Dictionary')
-                        continue
-                    newList.append(line + value)
+                if (self.Chr and self.Pos is not None):
+                    url = "https://www.ncbi.nlm.nih.gov/snp/?term=" + line[Chr_index] +"%3A" + line[Pos_index]
+                    SNPDict = self.getDataFromDBSNP(url=url)
+                    for key, value in SNPDict.items():
+                        print("Working on Chromosome:" + line[Chr_index] + " and Position:" + line[Pos_index])
+                        temp = []
+                        temp.extend([key, value])
+                        #temp += line[Chr_index] + line[Pos_index]
+                        newList.append(line+temp)
+                elif self.SNP is not None:
+                    url = "https://www.ncbi.nlm.nih.gov/snp/?term=" + line[SNP_index]
+                    SNPDict = self.getDataFromDBSNP(url=url)
+                    for key, value in SNPDict.items():
+                        print('Working on ' + key)
+                        if line[SNP_index] != key:
+                            print('The SNP id is not found in the SNP Dictionary')
+                            continue
+                        newList.append(line + value)
+
             resultDict['resultList'] = newList
 
         except FileNotFoundError:
@@ -108,6 +139,8 @@ class Crawling:
         finally:
             print("*********Finished " + self.fileName + "*******")
         return resultDict
+
+
 
     def saveResult(self, outDir: str = None):
         resultDict = self.crawlingFromFile()
@@ -121,7 +154,13 @@ class Crawling:
         dbSNP.close()
 
 if __name__ == "__main__":
-    test = Crawling(fileName='test100.txt', SNP='MarkerName', GRCh='GRCh37', sep=',')
+    os.chdir("D:/A_SAUVER/python_project/dbSNP")
+
+    #test = Crawling(fileName='SNP_test100.txt', SNP='MarkerName', GRCh='GRCh37', sep=',')
+    #test.saveResult(outDir=os.getcwd())
+
+    test = Crawling(fileName='ChrPos_test100.txt', Chr='Chromosome', Pos='Position', GRCh='GRCh37', sep='\t')
     test.saveResult(outDir=os.getcwd())
+
 
 
