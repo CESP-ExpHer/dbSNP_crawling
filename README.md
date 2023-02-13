@@ -25,7 +25,7 @@ if __name__ == "__main__":
 ```
 
 ### To get the SNP given chromosome and position 
-It needs 4 arguments to be passed on the Crawling()
+It needs 5 arguments to be passed on the Crawling()
 - **fileName:** The name of the file
 - **Chr:** Chromosome column name 
 - **Pos:** Position column name
