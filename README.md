@@ -10,8 +10,8 @@ https://cesp.inserm.fr/en/equipe/exposome-and-heredity
 ## Notes
 This is **Crawling** python code to retrieve the chromosome & postioin of the SNP (rsID) from https://www.ncbi.nlm.nih.gov/ or vice versa.  
 
-### How to use
-# To get the chromosome and position given SNP
+# How to use
+### To get the chromosome and position given SNP
 It needs 4 arguments to be passed on the Crawling()
 - **fileName:** The name of the file
 - **SNP:** SNP (rsID) column name
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     test.saveResult(outDir=os.getcwd())
 ```
 
-# To get the SNP given chromosome and position 
+### To get the SNP given chromosome and position 
 It needs 4 arguments to be passed on the Crawling()
 - **fileName:** The name of the file
 - **Chr:** Chromosome column name 
