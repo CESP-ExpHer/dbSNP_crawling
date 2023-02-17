@@ -8,6 +8,18 @@ import os
 class noSNP(Exception):
     pass
 
+def getHTMLAsBeautifulSoup(url: str) -> BeautifulSoup:
+    """
+    :param url: URL address
+    """
+    r = requests.get(url)
+    if r.status_code >= 400:
+        raise requests.RequestException(str(r.status_code) + ": " + responses[r.status_code])
+    if r.status_code != 200:
+        print("Warning: response " + str(r.status_code) + "(" + responses[r.status_code] + ") for URL: " + url)
+    return BeautifulSoup(r.text, "html.parser")
+
+
 class Crawling:
     def __init__(self, fileName: str, SNP: str = None, Chr:str =None, Pos:str = None, GRCh: str = None, sep: str = ',') -> object:
         self.fileName = fileName
@@ -17,16 +29,7 @@ class Crawling:
         self.GRCh = GRCh
         self.sep = sep
 
-    def getHTMLAsBeautifulSoup(self, url: str) -> BeautifulSoup:
-        """
-        :param url: URL address
-        """
-        r = requests.get(url)
-        if r.status_code >= 400:
-            raise requests.RequestException(str(r.status_code) + ": " + responses[r.status_code])
-        if r.status_code != 200:
-            print("Warning: response " + str(r.status_code) + "(" + responses[r.status_code] + ") for URL: " + url)
-        return BeautifulSoup(r.text, "html.parser")
+
 
     def getDataFromDBSNP(self, url: str, maxRetry: int = 2) -> dict:
 
@@ -45,7 +48,7 @@ class Crawling:
         while not success:
             try:
                 attemptsRemaining -= 1
-                bsData = self.getHTMLAsBeautifulSoup(url)
+                bsData = getHTMLAsBeautifulSoup(url)
 
                 # Check if the SNP exists
                 exist = bsData.find('h2', attrs={"class": "search-results"})
@@ -68,10 +71,6 @@ class Crawling:
 
                 if (self.Chr and self.Pos) is not None:
                     # extract by GRCh; whether 37 or 38
-                    # temp = [chromosome.contents[0].get_text() + chromosome.contents[1].get_text()] + \
-                    #        [chromosome.contents[2].get_text() + chromosome.contents[3].get_text() +
-                    #         chromosome.contents[4].get_text() + chromosome.contents[5].get_text()]
-                    # chrPos = list(filter(lambda x: re.match(GRChRX, x), temp))[0].split('\n')
                     resultDict[SNP_name] = self.GRCh
                 elif self.SNP is not None:
                     chrPos = list(filter(lambda x: re.match(GRChRX, x), chromosome.contents))[0].split('\n')
@@ -107,7 +106,6 @@ class Crawling:
             elif self.SNP is not None:
                 header.append('Chromosome')
                 header.append('Position')
-            header.append('chr_pos')
             header.append('GRChEncode')
             resultDict['Column'] = header
 
@@ -154,13 +152,15 @@ class Crawling:
         dbSNP.close()
 
 if __name__ == "__main__":
-    os.chdir("D:/A_SAUVER/python_project/dbSNP")
+    os.chdir("D:/A_SAUVER/python_project/dbSNP/example")
 
-    #test = Crawling(fileName='SNP_test100.txt', SNP='MarkerName', GRCh='GRCh37', sep=',')
+    # Get Chromosome and Position based on SNP
+    #test = Crawling(fileName='menopause_menarche.txt', SNP='SNP', GRCh='GRCh37', sep='\t')
     #test.saveResult(outDir=os.getcwd())
 
-    test = Crawling(fileName='ChrPos_test100.txt', Chr='Chromosome', Pos='Position', GRCh='GRCh37', sep='\t')
-    test.saveResult(outDir=os.getcwd())
+    # Get SNP id based on Chromosome and Position
+    #test = Crawling(fileName='ChrPos_test100.txt', Chr='Chromosome', Pos='Position', GRCh='GRCh37', sep='\t')
+    #test.saveResult(outDir=os.getcwd())
 
 
 
