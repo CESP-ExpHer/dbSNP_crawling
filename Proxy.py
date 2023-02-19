@@ -4,7 +4,7 @@ from selenium import webdriver
 import pandas as pd
 
 
-def loadProxy(SNP, top=10):
+def loadProxy(SNP):
     browser = webdriver.Chrome()
     url = 'https://ldlink.nci.nih.gov/?var=' + SNP + '&pop=CEU%2BTSI%2BFIN%2BGBR%2BIBS&genome_build=grch37&r2_d=r2&window=500000&collapseTranscript=true&annotate=forge&tab=ldproxy'
     browser.get(url)
@@ -21,24 +21,27 @@ def loadProxy(SNP, top=10):
             continue
         success = True
 
-    proxyList = bsData.contents[0].split('\n')[1:top + 1]
+    proxyList = list(filter(None, bsData.contents[0].split('\n')[1:]))
     return proxyList
 
 
 class Proxy:
-    def __init__(self, SNP_fileName, outcomeGWAS_fileName, top=10):
+    def __init__(self, SNP_fileName, exposureGWAS_fileName, outcomeGWAS_fileName):
         self.SNP_fileName = SNP_fileName
+        self.exposureGWAS_fileName = exposureGWAS_fileName
         self.outcomeGWAS_fileName = outcomeGWAS_fileName
-        self.top = top
+
 
     def checkWithOutcome(self):
-        SNP_File = open(SNP_fileName, 'r')
-        outcomeGWAS = pd.read_csv(outcomeGWAS_fileName, sep='\t')
+        SNP_File = open(self.SNP_fileName, 'r')
+        exposureGWAS = pd.read_csv(self.exposureGWAS_fileName, sep='\t')
+        outcomeGWAS = pd.read_csv(self.outcomeGWAS_fileName, sep='\t')
         res = []
         for SNP in SNP_File.readlines():
             SNP = SNP.strip()
             print("********** Working on " + SNP + " **********")
-            proxyList = loadProxy(SNP=SNP, top=self.top)
+            proxyList = loadProxy(SNP=SNP)
+            temp_res = []
             for proxy in proxyList:
                 ind = proxy.strip().split('\t')
                 Proxy_SNP = ind[0]
@@ -51,12 +54,18 @@ class Proxy:
                 OA = ind[2].split('/')[1][0]
                 if (MAF >= 0.42):
                     continue
-                exist = outcomeGWAS.loc[(outcomeGWAS['chromosome'] == int(chr)) & (outcomeGWAS['position'] == int(pos))]
-                if len(exist) == 0:
+                existExposure = exposureGWAS.loc[(exposureGWAS['chromosome'] == int(chr)) & (exposureGWAS['position'] == int(pos))]
+                existOutcome = outcomeGWAS.loc[(outcomeGWAS['chromosome'] == int(chr)) & (outcomeGWAS['position'] == int(pos))]
+
+                if len(existOutcome) == 0 or len(existExposure) == 0:
                     continue
                 else:
-                    res.append([SNP, Proxy_SNP, chr, pos, EA, OA, Dprime, R2])
+                    temp_res.extend([SNP, Proxy_SNP, chr, pos, EA, OA, Dprime, R2])
+                    res.append(temp_res)
                     break
+            if len(temp_res) == 0:
+                print('We could not find the Proxy SNP for ' + SNP)
+
         print('Finished!!')
         return res
 
@@ -73,9 +82,13 @@ class Proxy:
 if __name__ == "__main__":
     os.chdir("D:/A_SAUVER/python_project/dbSNP/example/proxy")
 
-    outcomeGWAS_fileName = 'meta_EUR_FE.out'
-    SNP_fileName = 'snplist.txt'
+    outcomeGWAS_fileName = 'outcomeGWAS.out'
+    exposureGWAS_fileName = 'dbSNP_GRCh37_menarche.txt'
+    SNP_fileName = 'menarche_snplist.txt'
 
-    test = Proxy(SNP_fileName=SNP_fileName, outcomeGWAS_fileName=outcomeGWAS_fileName, top=10)
+    test = Proxy(SNP_fileName=SNP_fileName, exposureGWAS_fileName=exposureGWAS_fileName, outcomeGWAS_fileName=outcomeGWAS_fileName)
     test.saveResult(outDir=os.getcwd())
+
+
+
 

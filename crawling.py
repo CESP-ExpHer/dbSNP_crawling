@@ -104,8 +104,9 @@ class Crawling:
             if (self.Chr and self.Pos is not None):
                 header.append('SNP')
             elif self.SNP is not None:
-                header.append('Chromosome')
-                header.append('Position')
+                header.append('chromosome')
+                header.append('position')
+                header.append('chr_pos')
             header.append('GRChEncode')
             resultDict['Column'] = header
 
@@ -152,11 +153,11 @@ class Crawling:
         dbSNP.close()
 
 if __name__ == "__main__":
-    os.chdir("D:/A_SAUVER/python_project/dbSNP/example")
+    os.chdir("D:/A_SAUVER/PhD/Hormones and Reproductive factors/Summary Statistics")
 
     # Get Chromosome and Position based on SNP
-    #test = Crawling(fileName='menopause_menarche.txt', SNP='SNP', GRCh='GRCh37', sep='\t')
-    #test.saveResult(outDir=os.getcwd())
+    test = Crawling(fileName='menopause_menarche.txt', SNP='SNP', GRCh='GRCh37', sep='\t')
+    test.saveResult(outDir=os.getcwd())
 
     # Get SNP id based on Chromosome and Position
     #test = Crawling(fileName='ChrPos_test100.txt', Chr='Chromosome', Pos='Position', GRCh='GRCh37', sep='\t')
