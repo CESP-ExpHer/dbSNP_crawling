@@ -4,7 +4,7 @@ from selenium import webdriver
 import pandas as pd
 
 
-def loadProxy(SNP):
+def loadProxy(SNP: str) -> list:
     browser = webdriver.Chrome()
     url = 'https://ldlink.nci.nih.gov/?var=' + SNP + '&pop=CEU%2BTSI%2BFIN%2BGBR%2BIBS&genome_build=grch37&r2_d=r2&window=500000&collapseTranscript=true&annotate=forge&tab=ldproxy'
     browser.get(url)
@@ -65,6 +65,8 @@ class Proxy:
                     break
             if len(temp_res) == 0:
                 print('We could not find the Proxy SNP for ' + SNP)
+                temp_res.extend([SNP, '-', '-', '-', '-', '-', '-', '-'])
+                res.append(temp_res)
 
         print('Finished!!')
         return res
