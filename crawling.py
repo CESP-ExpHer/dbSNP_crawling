@@ -35,9 +35,9 @@ class Crawling:
 
         # define regular expression based on the GRCh
         if self.GRCh == "GRCh37":
-            GRChRX = re.compile("[0-9]{1,2}[:][0-9]{1,20}\n\(GRCh37\)")
+            GRChRX = re.compile("[0-9]{1,2}|X[:][0-9]{1,20}\n\(GRCh37\)")
         elif self.GRCh == "GRCh38":
-            GRChRX = re.compile("[0-9]{1,2}[:][0-9]{1,20}\n\(GRCh38\)")
+            GRChRX = re.compile("[0-9]{1,2}|X[:][0-9]{1,20}\n\(GRCh38\)")
 
         # flag indicating if the value was successfully retrieved
         success = False
@@ -153,10 +153,10 @@ class Crawling:
         dbSNP.close()
 
 if __name__ == "__main__":
-    os.chdir("D:/A_SAUVER/PhD/Hormones and Reproductive factors/Summary Statistics")
+    os.chdir("D:/A_SAUVER/PhD/Hormones and Reproductive factors/Summary Statistics/EXPOSURE/SHBG")
 
     # Get Chromosome and Position based on SNP
-    test = Crawling(fileName='menopause_menarche.txt', SNP='SNP', GRCh='GRCh37', sep='\t')
+    test = Crawling(fileName='SHBG.txt', SNP='SNP', GRCh='GRCh37', sep='\t')
     test.saveResult(outDir=os.getcwd())
 
     # Get SNP id based on Chromosome and Position
