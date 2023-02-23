@@ -35,9 +35,9 @@ class Crawling:
 
         # define regular expression based on the GRCh
         if self.GRCh == "GRCh37":
-            GRChRX = re.compile("[0-9]{1,2}|X[:][0-9]{1,20}\n\(GRCh37\)")
+            GRChRX = re.compile("([0-9]{1,2}|X)[:][0-9]{1,20}\n\(GRCh37\)")
         elif self.GRCh == "GRCh38":
-            GRChRX = re.compile("[0-9]{1,2}|X[:][0-9]{1,20}\n\(GRCh38\)")
+            GRChRX = re.compile("([0-9]{1,2}|X)[:][0-9]{1,20}\n\(GRCh38\)")
 
         # flag indicating if the value was successfully retrieved
         success = False
@@ -68,7 +68,6 @@ class Crawling:
 
                 # get chromosome and position info
                 chromosome = chromosomeData[0].find_all('dd')[2]
-
                 if (self.Chr and self.Pos) is not None:
                     # extract by GRCh; whether 37 or 38
                     resultDict[SNP_name] = self.GRCh
@@ -130,6 +129,7 @@ class Crawling:
                             print('The SNP id is not found in the SNP Dictionary')
                             continue
                         newList.append(line + value)
+
 
             resultDict['resultList'] = newList
 
