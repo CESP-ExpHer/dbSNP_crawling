@@ -75,7 +75,7 @@ class Proxy:
         res = self.checkWithOutcome()
         fileWithoutExt = os.path.splitext(self.SNP_fileName)[0]
         ProxySNP = open(f'{outDir}/ProxySNP_{fileWithoutExt}.txt', 'w')
-        ProxySNP.writelines('\t'.join(['SNP', 'ProxySNP', 'Chromosome', 'Position', 'EA', 'OA', 'DPrime', 'R2']) + '\n')
+        ProxySNP.writelines('\t'.join(['SNP', 'ProxySNP', 'chromosome', 'position', 'EA', 'OA', 'DPrime', 'R2']) + '\n')
 
         ProxySNP.writelines('\t'.join(i) + '\n' for i in res)
         ProxySNP.close()
