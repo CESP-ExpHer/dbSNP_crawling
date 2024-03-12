@@ -41,8 +41,8 @@ if __name__ == "__main__":
 ```
 
 ## 2) Proxy.py
-It will extrat proxy SNPs from LDlinks that are present in both the exposure and outcome GWAS datasets.  It needs 3 arguments to be passed on the Proxy()
-- **SNP_fileName:** The name of text file that contains the list of SNP.
+It will extract proxy SNPs from LDlinks that are present in both the exposure and outcome GWAS datasets.  It needs 3 arguments to be passed on the Proxy()
+- **SNP_fileName:** The name of the text file that contains the list of SNP.
 - **exposureGWAS_fileName:** The name of exposure GWAS
 - **outcomeGWAS_fileName:** The name of outcome GWAS
 ```c
@@ -66,7 +66,7 @@ rs2274465
 rs2836950
 rs4735765
 ```
-Then by running Proxy(), you will have the below output which are present in both exposure and outcome GWAS with D' and R2 value
+Then by running Proxy(), you will have the below output which is present in both exposure and outcome GWAS with D' and R2 value
 ```c
 SNP	ProxySNP	Chromosome	Position	EA	OA	DPrime	R2
 rs1254337	rs1254331	14	60916237	A	G	1.0	1.0
