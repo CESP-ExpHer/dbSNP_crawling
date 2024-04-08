@@ -1,15 +1,14 @@
 # dbSNP_crawling
-
 Created by: Seehyun Park
-
 Creation date: 08 Feb 2023  
-
+Update: Apr 2024<br>
 https://cesp.inserm.fr/en/equipe/exposome-and-heredity  
-
+<br>
+<br>
 
 ## Notes
 - **crawling.py** is a python code to retrieve the chromosome & postioin of the SNP (rsID) from https://www.ncbi.nlm.nih.gov/ or vice versa.  
-- **Proxy.py** is a python code to retrieve the proxy SNP of your SNP of interest from LDlink (https://ldlink.nci.nih.gov/?tab=ldproxy).
+- **Proxy.py** is a Python code to retrieve the proxy SNP of your SNP of interest from LDlink (https://ldlink.nci.nih.gov/?tab=ldproxy).
 
 # How to use
 ## 1) crawling.py
